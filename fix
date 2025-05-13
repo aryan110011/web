@@ -1,0 +1,105 @@
+import time
+import json
+import requests
+import random
+from datetime import datetime
+
+# Function to print the logo with "Sarfu Rullex Tool" and red color
+def print_logo():
+    start_time = datetime.now().strftime("%d-%m-%Y %I:%M:%S %p")
+    print("\n\n")  # To make space before logo
+    print("\033[91m" + r""" 
+ █████╗ ██████╗ ██╗   ██╗ █████╗ ███╗   ██╗
+██╔══██╗██╔══██╗██║   ██║██╔══██╗████╗  ██║
+███████║██████╔╝██║   ██║███████║██╔██╗ ██║
+██╔══██║██╔═══╝ ██║   ██║██╔══██║██║╚██╗██║
+██║  ██║██║     ╚██████╔╝██║  ██║██║ ╚████║
+╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝
+         💥 Sarfu Rullex Tool 💥
+              Made by ArYan 👑
+\033[0m""")  # Reset color back to normal
+    print(f"🕒 Tool Started At: {start_time}\n")
+
+# Function to ask for the password
+def password_protection():
+    password = "password"  # Replace with your secure password
+    entered_password = input("🔒 Enter password to access the tool: ")
+    if entered_password != password:
+        print("❌ Incorrect password. Exiting...")
+        exit()
+
+# Function to load tokens from a file (for multi token/cookie mode)
+def load_tokens_from_cookies(file_path):
+    tokens = []
+    with open(file_path, 'r') as f:
+        cookies = f.readlines()
+        for cookie in cookies:
+            tokens.append(get_token_from_cookie(cookie.strip()))
+    return tokens
+
+# Function to get token from a single cookie (for single cookie mode)
+def get_token_from_cookie(cookie):
+    # Replace with actual logic to convert cookie to token
+    return f"token_for_{cookie}"
+
+# Function to perform commenting
+def comment_on_post(token, post_id, comment):
+    # Here, you would integrate the actual API or logic for commenting on a Facebook post
+    print(f"📌 Comment sent from {token} to Post ID {post_id}: {comment}")
+
+# Function to simulate commenting on multiple posts
+def comment_from_multiple_tokens(tokens, post_id, comment, delay):
+    for token in tokens:
+        comment_on_post(token, post_id, comment)
+        print(f"🌟 Comment sent from Token: {token}")
+        time.sleep(delay)
+
+# Main function for starting the script
+def main():
+    password_protection()  # Enforce password protection
+
+    print_logo()  # Display logo
+
+    # Prompt user for mode (single/multi) and login type (token/cookie)
+    mode = input("🔄 Choose mode (single/multi): ").lower()
+    login_type = input("🔑 Login using (token/cookie): ").lower()
+
+    # Load tokens based on mode
+    tokens = []
+    if login_type == "cookie":
+        if mode == "multi":
+            file_path = input("📂 Cookie file path: ")
+            tokens = load_tokens_from_cookies(file_path)
+        else:
+            cookie = input("🍪 Enter single cookie: ")
+            token = get_token_from_cookie(cookie)
+            tokens.append(token)
+            print(f"✅ Cookie converted to token: {token}")
+    elif login_type == "token":
+        token = input("🔑 Enter token: ")
+        tokens.append(token)
+        print(f"✅ Token added: {token}")
+
+    # Display token information
+    print(f"🚀 {len(tokens)} token(s) loaded.")
+    
+    # Prompt user for post ID, comment, and delay time
+    post_id = input("🔗 Enter Post ID to comment on: ")
+    comment = input("💬 Enter your comment: ")
+    delay = int(input("⏳ Set delay between comments (seconds): "))
+
+    # Ask for backup tokens
+    backup_tokens = []
+    backup_option = input("💡 Do you want to add backup tokens? (yes/no): ").lower()
+    if backup_option == "yes":
+        backup_tokens = input("📋 Enter backup tokens (comma-separated): ").split(',')
+        tokens.extend(backup_tokens)
+        print(f"🔄 Backup tokens added: {backup_tokens}")
+
+    # Start commenting
+    comment_from_multiple_tokens(tokens, post_id, comment, delay)
+
+    print("\n✅ Tool execution completed successfully!")
+
+if __name__ == "__main__":
+    main()
